@@ -1,0 +1,80 @@
+WSU Smart Apartment ADL Normal Testbed
+
+Description
+
+These datasets represent sensor events collected in the WSU smart apartment
+testbed.  The data represents participants performing five ADL activities
+in the apartment.  The five tasks are:
+
+   1:  Make a phone call.  The participant moves to the phone in the
+       dining room, looks p a specific number in the phone book, dials
+       the number, and listens to the message.  The recorded message provides
+       cooking directions, which the participant summarizes on a notepad.
+
+   2:  Wash hands.  The participant moves into the kitchen sink and washes
+       his/her hands in the sink, using hand soap and drying their hands
+       with a paper towel.
+
+   3:  Cook.  The participant cooks a pot of oatmeal according to the directions
+       given in the phone message.  To cook the oatmeal the participant must
+       measure water, pour the water into a pot and boil it, add oats, then
+       put the oatmeal into a bowl with raisins and brown sugar.
+
+   4:  Eat.  The participant takes the oatmeal and a medicine container to the
+       dining room and eats the food.
+
+   5:  Clean.  The participant takes all of the dishes to the sink and cleans
+       them with water and dish soap in the kitchen.
+
+File format
+
+The files are named according to the participant number and the task
+number.  File p01.t1 thus represents the sensor data for participant 1
+performing task 1.  There is one sensor event on each line of the files.
+The event syntax is Date Time SensorID Value.
+
+A separate file, data, contains all of the sensor events in one file.
+Each activity is indicated by its name with a begin event and a corresponding
+end event.
+
+Sensor layouts
+
+The sensor layout of the apartment is shown in
+the files Chinook_3_Bedroom_TH.png and Chinook_Cabinet.png.
+The sensors can be categorized by:
+
+   M01..M26:  motion sensors
+   I01..I05:  item sensors for oatmeal, raisins, brown sugar,
+              bowl, measuring spoon
+   I06:    medicine container sensor
+   I07:    pot sensor
+   I08:    phone book sensor
+   D01:    cabinet sensor
+   AD1-A:  water sensor
+   AD1-B:  water sensor
+   AD1-C:  burner sensor
+   asterisk:  phone usage
+
+Data files
+
+p01.t1  p03.t3  p05.t5  p08.t2  p10.t4  p13.t1  p15.t3  p32.t5  p42.t2  p49.t4
+p01.t2  p03.t4  p06.t1  p08.t3  p10.t5  p13.t2  p15.t4  p40.t1  p42.t3  p49.t5
+p01.t3  p03.t5  p06.t2  p08.t4  p11.t1  p13.t3  p15.t5  p40.t2  p42.t4  p50.t1
+p01.t4  p04.t1  p06.t3  p08.t5  p11.t2  p13.t4  p16.t1  p40.t3  p42.t5  p50.t2
+p01.t5  p04.t2  p06.t4  p09.t1  p11.t3  p13.t5  p16.t2  p40.t4  p43.t1  p50.t3
+p02.t1  p04.t3  p06.t5  p09.t2  p11.t4  p14.t1  p16.t3  p40.t5  p43.t2  p50.t4
+p02.t2  p04.t4  p07.t1  p09.t3  p11.t5  p14.t2  p16.t4  p41.t1  p43.t3  p50.t5
+p02.t3  p04.t5  p07.t2  p09.t4  p12.t1  p14.t3  p16.t5  p41.t2  p43.t4  p51.t1
+p02.t4  p05.t1  p07.t3  p09.t5  p12.t2  p14.t4  p32.t1  p41.t3  p43.t5  p51.t2
+p02.t5  p05.t2  p07.t4  p10.t1  p12.t3  p14.t5  p32.t2  p41.t4  p49.t1  p51.t3
+p03.t1  p05.t3  p07.t5  p10.t2  p12.t4  p15.t1  p32.t3  p41.t5  p49.t2  p51.t4
+p03.t2  p05.t4  p08.t1  p10.t3  p12.t5  p15.t2  p32.t4  p42.t1  p49.t3  p51.t5
+data
+
+Papers
+
+All use of the data must cite the WSU smart home project.
+
+D. Cook and M. Schmitter-Edgecombe, Assessing the quality of activities in a
+smart environment.  Methods of Information in Medicine, 2009.
+
