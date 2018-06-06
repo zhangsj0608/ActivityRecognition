@@ -49,6 +49,7 @@ class State(Enum):
     START = 1
     END = 0
     ABSENT = 1
+    PRESENT = 0
     OPEN = 1
     CLOSE = 0
 
