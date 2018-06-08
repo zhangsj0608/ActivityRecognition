@@ -4,6 +4,7 @@ from utils import readers
 from utils import pre_precessing
 from cnn.app_flag import FLAGS
 
+
 def write_and_encode(data_list, tfrecord_filename):
     writer = tf.python_io.TFRecordWriter(tfrecord_filename)
     for label, data_matrix in data_list:
@@ -81,7 +82,7 @@ def parser(record_line):
         "data_raw": tf.FixedLenFeature([], tf.string)
     }
     parsed = tf.parse_single_example(record_line, features=features)
-    label = tf.cast(parsed["label"], tf.int32)
+    label = tf.cast(parsed["label"], tf.int32) - 1  # 类别是从1开始的
     data = tf.decode_raw(parsed["data_raw"], tf.float64)
     data = tf.reshape(data, [FLAGS.image_rows, FLAGS.image_cols])
     data = tf.cast(data, tf.float32)
@@ -93,10 +94,10 @@ def eval_input_fn():
     tfrecord_file = "../resources/test_tfrecord"  # 测试数据文件路径
     dataset = tf.data.TFRecordDataset(tfrecord_file)
     dataset = dataset.map(parser)
-    num_epochs = 5
+    # num_epochs = 5
     batch_size = 5
 
-    eval_dataset = dataset.repeat(num_epochs).batch(batch_size)
+    eval_dataset = dataset.batch(FLAGS.batch_size)
     eval_iterator = eval_dataset.make_one_shot_iterator()
 
     features, labels = eval_iterator.get_next()
@@ -112,22 +113,22 @@ def cnn_fn(features, labels, mode):
         num_filters = 15
         kernel_size = [5, 5]
         activation_method = tf.nn.relu
+        conv1 = convolution_layer(input_layer, num_filters, kernel_size, activation_method)
 
+    with tf.variable_scope("pool1"):
         pool_size_matrix = [2, 2]
         stride = 2
-
-        conv1 = convolution_layer(input_layer, num_filters, kernel_size, activation_method)
         pool1 = pooling_layer(conv1, pool_size_matrix, stride)
 
     with tf.variable_scope("conv2"):
         num_filters = 20
         kernel_size = [5, 5]
         activation_method = tf.nn.relu
+        conv2 = convolution_layer(pool1, num_filters, kernel_size, activation_method)
 
+    with tf.variable_scope("pool2"):
         pool_size_matrix = [2, 2]
         stride = 2
-
-        conv2 = convolution_layer(pool1, num_filters, kernel_size, activation_method)
         pool2 = pooling_layer(conv2, pool_size_matrix, stride)
 
     with tf.variable_scope("dense"):
@@ -156,7 +157,7 @@ def cnn_fn(features, labels, mode):
     if mode == tf.estimator.ModeKeys.PREDICT:
         model_fn = tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 
-    onehot_labels = tf.one_hot(indices=tf.cast(labels, tf.int32)-1, depth=FLAGS.label_size)
+    onehot_labels = tf.one_hot(indices=tf.cast(labels, tf.int32), depth=FLAGS.label_size)
     # loss = tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=logits)
     loss = tf.losses.softmax_cross_entropy(onehot_labels, logits, scope="LOSS")
 
@@ -167,6 +168,12 @@ def cnn_fn(features, labels, mode):
             loss=loss,
             global_step=tf.train.get_global_step()
         )
+
+        accuracy = tf.metrics.accuracy(
+            labels=labels,
+            predictions=predictions["classes"]
+        )
+        tf.summary.scalar("accuracy", accuracy[1])
         model_fn = tf.estimator.EstimatorSpec(
             mode=mode,
             loss=loss,
@@ -218,12 +225,14 @@ def write_user_instances_to_tfrecord():
 
 def main():
 
+    tf.logging.set_verbosity(tf.logging.INFO)
     # 构建模型
     cnn_classifier = tf.estimator.Estimator(
-        model_fn=cnn_fn, model_dir="tmp/AR_minist_convnet_model"
+        model_fn=cnn_fn, model_dir="../tmp/AR_minist_convnet_model4"
     )
     cnn_classifier.train(input_fn=train_input_fn)
     eval_results = cnn_classifier.evaluate(input_fn=eval_input_fn)
+    print("eval_results:", eval_results)
 
     # 记录log
     # tensors_to_log = {"probabilities": "softmax_tensor"}
